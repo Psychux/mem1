@@ -65,6 +65,39 @@ function afficherInfosParticipant(elementId = "infosParticipant", afficherCondit
       `Participant : ${participantId}`;
   }
 }
+
+/* -----------------------------
+   Reprise de session
+----------------------------- */
+
+const STORAGE_KEY_REPRISE = "page_reprise";
+
+function setPageReprise(url) {
+  const absoluteUrl = new URL(url, window.location.href).href;
+  localStorage.setItem(STORAGE_KEY_REPRISE, absoluteUrl);
+}
+
+function setPageRepriseActuelle() {
+  localStorage.setItem(STORAGE_KEY_REPRISE, window.location.href);
+}
+
+function getPageReprise() {
+  return localStorage.getItem(STORAGE_KEY_REPRISE);
+}
+
+function clearPageReprise() {
+  localStorage.removeItem(STORAGE_KEY_REPRISE);
+}
+
+function naviguerVers(url) {
+  setPageReprise(url);
+  window.location.href = url;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  setPageRepriseActuelle();
+});
+
 /* -----------------------------
    Données locales
 ----------------------------- */
@@ -269,6 +302,52 @@ function saveSPESResponses({ phase, startTime, responses }) {
 }
 
 /* -----------------------------
+   MPS
+----------------------------- */
+
+function calculateMPSScores(responses) {
+
+  const physicalPresence =
+    Number(responses.mps_pp_01) +
+    Number(responses.mps_pp_02) +
+    Number(responses.mps_pp_03) +
+    Number(responses.mps_pp_04) +
+    Number(responses.mps_pp_05);
+
+  const selfPresence =
+    Number(responses.mps_sp_01) +
+    Number(responses.mps_sp_02) +
+    Number(responses.mps_sp_03) +
+    Number(responses.mps_sp_04) +
+    Number(responses.mps_sp_05);
+
+  return {
+    mps_presence_physique_total: physicalPresence,
+    mps_self_presence_total: selfPresence,
+    mps_total: physicalPresence + selfPresence
+  };
+}
+
+function saveMPSResponses({ phase, startTime, responses }) {
+
+  const scores = calculateMPSScores(responses);
+
+  const entry = {
+    ...createBaseEntry({
+      questionnaire: "mps",
+      phase: phase,
+      startTime: startTime
+    }),
+    ...responses,
+    ...scores
+  };
+
+  saveDataEntry(entry);
+
+  return entry;
+}
+
+/* -----------------------------
    Effort mental
 ----------------------------- */
 
@@ -320,15 +399,16 @@ function getConditionFolder() {
 }
 
 function goToDashboard() {
+  clearPageReprise();
   window.location.href = "../dashboard.html";
 }
 
 function goToIntroduction() {
-  window.location.href = "introduction.html";
+  naviguerVers("introduction.html");
 }
 
 function goToVVIQ2() {
-  window.location.href = "vviq2/introduction.html";
+  naviguerVers("vviq2/introduction.html");
 }
 
 function goToConditionFamiliarisation() {
@@ -339,15 +419,15 @@ function goToConditionFamiliarisation() {
     return;
   }
 
-  window.location.href = `../${condition}/familiarisation.html`;
+  naviguerVers(`../${condition}/familiarisation.html`);
 }
 
 function goToSPES(phase) {
-  window.location.href = `../questionnaires/spes.html?phase=${encodeURIComponent(phase)}`;
+  naviguerVers(`../questionnaires/spes.html?phase=${encodeURIComponent(phase)}`);
 }
 
 function goToEffort(phase) {
-  window.location.href = `../questionnaires/effort.html?phase=${encodeURIComponent(phase)}`;
+  naviguerVers(`../questionnaires/effort.html?phase=${encodeURIComponent(phase)}`);
 }
 
 function goToNextPhaseAfterEffort(phase) {
@@ -373,15 +453,15 @@ function goToNextPhaseAfterEffort(phase) {
     return;
   }
 
-  window.location.href = nextPage;
+  naviguerVers(nextPage);
 }
 
 function goToSociodemographie() {
-  window.location.href = "sociodemographie.html";
+  naviguerVers("sociodemographie.html");
 }
 
 function goToFin() {
-  window.location.href = "fin.html";
+  naviguerVers("fin.html");
 }
 
 /* -----------------------------
