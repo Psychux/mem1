@@ -92,7 +92,8 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
   const summary = {
     protocol_version: getProtocolVersion(),
     participant_id: participantId,
-    condition_experimentale: getCurrentCondition()
+    condition_experimentale:
+    data.find(entry => entry.condition_experimentale)?.condition_experimentale || getCurrentCondition()
   };
 
   if (vviqEntry) {
@@ -127,6 +128,7 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
 
     summary[`effort_mental_${phase}`] = entry.effort_mental;
     summary[`plaisir_${phase}`] = entry.plaisir;
+    summary[`respect_consigne_${phase}`] = entry.respect_consigne;
   }
 
   const spesTotalValues = spesEntries
@@ -159,6 +161,15 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
     .map(entry => Number(entry.plaisir))
     .filter(value => !Number.isNaN(value));
 
+  const respectConsigneValues = evaluationEntries
+    .map(entry => Number(entry.respect_consigne))
+    .filter(value => !Number.isNaN(value));
+
+  const respectConsigneValuesPhases1To4 = evaluationEntries
+   .filter(entry => ["phase1", "phase2", "phase3", "phase4"].includes(entry.phase))
+   .map(entry => Number(entry.respect_consigne))
+   .filter(value => !Number.isNaN(value));
+
   summary.spes_total_moyenne = mean(spesTotalValues);
   summary.spes_sl_moyenne = mean(spesSlValues);
   summary.spes_pa_moyenne = mean(spesPaValues);
@@ -168,6 +179,9 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
 
   summary.plaisir_moyen_total_avec_familiarisation = mean(plaisirValues);
   summary.plaisir_moyen_phases_1_4 = mean(plaisirValuesPhases1To4);
+
+  summary.respect_consigne_moyen_total_avec_familiarisation = mean(respectConsigneValues);
+  summary.respect_consigne_moyen_phases_1_4 = mean(respectConsigneValuesPhases1To4);  
 
   if (socioEntry) {
     summary.preference_vue = socioEntry.preference_vue;
@@ -297,14 +311,7 @@ function initDashboard() {
 
     saveParticipantSettings(participant, condition);
     afficherSessionActive();
-  });
-  const pageReprise = getPageReprise();
-  
-  if (pageReprise) {
-    boutonReprendre.classList.remove("hidden");
-  } else {
-    boutonReprendre.classList.add("hidden");
-  }  
+  }); 
 
   boutonDemarrer.addEventListener("click", function () {
     window.location.href = "questionnaires/consentement.html";
@@ -334,6 +341,7 @@ function initDashboard() {
     resumeDonnees.innerHTML = "";
 
     boutonDemarrer.classList.add("hidden");
+    boutonReprendre.classList.add("hidden");
     masquerBoutonsExport();
   });
 
@@ -358,7 +366,8 @@ function initDashboard() {
       Genre : ${synthese.genre ?? "non disponible"}<br>
       SPES moyen : ${synthese.spes_total_moyenne ?? "non disponible"}<br>
       Effort moyen phases 1 à 4 : ${synthese.effort_moyen_phases_1_4 ?? "non disponible"}<br>
-      Plaisir moyen phases 1 à 4 : ${synthese.plaisir_moyen_phases_1_4 ?? "non disponible"}
+      Plaisir moyen phases 1 à 4 : ${synthese.plaisir_moyen_phases_1_4 ?? "non disponible"}<br>
+      Respect consigne moyen phases 1 à 4 : ${synthese.respect_consigne_moyen_phases_1_4 ?? "non disponible"}<br>
     `;
   });
 
@@ -434,6 +443,14 @@ function initDashboard() {
     `;
 
     boutonDemarrer.classList.remove("hidden");
+
+    const pageReprise = getPageReprise();
+
+    if (pageReprise) {
+     boutonReprendre.classList.remove("hidden");
+    } else {
+      boutonReprendre.classList.add("hidden");
+    }
     afficherBoutonsExport();
   }
 

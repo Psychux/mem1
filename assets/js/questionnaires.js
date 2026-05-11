@@ -31,12 +31,12 @@ function verifierSessionParticipant() {
       <main class="card">
         <h1>Erreur de session</h1>
         <p>
-          Aucun participant ou aucune condition expérimentale n’a été enregistré.
+          Aucun participant ou aucune condition expérimentale n'a été enregistré.
         </p>
         <p>
-          Veuillez appeler l’expérimentateur.
+          Veuillez appeler l'expérimentateur.
         </p>
-        <button onclick="window.location.href='../dashboard.html'">
+        <button onclick="goToDashboard()">
           Retour au tableau de bord
         </button>
       </main>
@@ -243,6 +243,7 @@ function requireRangeValue(inputId, errorMessage) {
   hideError();
   return Number(input.value);
 }
+
 function randomiserOrdreQuestions(containerId) {
   const container = document.getElementById(containerId);
 
@@ -259,6 +260,7 @@ function randomiserOrdreQuestions(containerId) {
 
   questions.forEach(question => container.appendChild(question));
 }
+
 /* -----------------------------
    SPES
 ----------------------------- */
@@ -351,7 +353,13 @@ function saveMPSResponses({ phase, startTime, responses }) {
    Effort mental
 ----------------------------- */
 
-function saveEvaluationPhaseResponse({ phase, startTime, effortMental, plaisir }) {
+function saveEvaluationPhaseResponse({
+  phase,
+  startTime,
+  effortMental,
+  plaisir,
+  respectConsigne
+}) {
   const entry = {
     ...createBaseEntry({
       questionnaire: "evaluation_phase",
@@ -359,7 +367,8 @@ function saveEvaluationPhaseResponse({ phase, startTime, effortMental, plaisir }
       startTime: startTime
     }),
     effort_mental: Number(effortMental),
-    plaisir: Number(plaisir)
+    plaisir: Number(plaisir),
+    respect_consigne: Number(respectConsigne)
   };
 
   saveDataEntry(entry);
@@ -400,7 +409,18 @@ function getConditionFolder() {
 
 function goToDashboard() {
   clearPageReprise();
-  window.location.href = "../dashboard.html";
+
+  const path = window.location.pathname;
+
+  if (path.includes("/questionnaires/vviq2/")) {
+    window.location.href = "../../dashboard.html";
+  } else if (path.includes("/questionnaires/")) {
+    window.location.href = "../dashboard.html";
+  } else if (path.includes("/ivs/") || path.includes("/im/") || path.includes("/si/")) {
+    window.location.href = "../dashboard.html";
+  } else {
+    window.location.href = "dashboard.html";
+  }
 }
 
 function goToIntroduction() {
@@ -444,12 +464,12 @@ function goToNextPhaseAfterEffort(phase) {
     phase2: `../${condition}/phase3.html`,
     phase3: `../${condition}/phase4.html`,
     phase4: "sociodemographie.html"
-    };
+  };
 
   const nextPage = nextPages[phase];
 
   if (!nextPage) {
-    showError("Erreur : phase inconnue. Veuillez appeler l’expérimentateur.");
+    showError("Erreur : phase inconnue. Veuillez appeler l'expérimentateur.");
     return;
   }
 
@@ -467,6 +487,15 @@ function goToFin() {
 /* -----------------------------
    Export futur : préparation
 ----------------------------- */
+
+function getDataForCurrentParticipant() {
+  const participantId = getParticipantId();
+
+  return getStoredData().filter(
+    entry => entry.participant_id === participantId
+  );
+}
+
 function calculateParticipantSummary(participantId = getParticipantId()) {
   const data = getStoredData().filter(
     entry => entry.participant_id === participantId
@@ -480,7 +509,8 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
   const summary = {
     protocol_version: getProtocolVersion(),
     participant_id: participantId,
-    condition_experimentale: getConditionExperimentale()
+    condition_experimentale:
+      data.find(entry => entry.condition_experimentale)?.condition_experimentale || getConditionExperimentale()
   };
 
   /* VVIQ-2 */
@@ -518,6 +548,7 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
 
     summary[`effort_mental_${phase}`] = entry.effort_mental;
     summary[`plaisir_${phase}`] = entry.plaisir;
+    summary[`respect_consigne_${phase}`] = entry.respect_consigne;
   }
 
   const spesTotalValues = spesEntries
@@ -550,6 +581,15 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
     .map(entry => Number(entry.plaisir))
     .filter(value => !Number.isNaN(value));
 
+  const respectConsigneValues = evaluationEntries
+    .map(entry => Number(entry.respect_consigne))
+    .filter(value => !Number.isNaN(value));
+
+  const respectConsigneValuesPhases1To4 = evaluationEntries
+    .filter(entry => ["phase1", "phase2", "phase3", "phase4"].includes(entry.phase))
+    .map(entry => Number(entry.respect_consigne))
+    .filter(value => !Number.isNaN(value));
+
   summary.spes_total_moyenne = mean(spesTotalValues);
   summary.spes_sl_moyenne = mean(spesSlValues);
   summary.spes_pa_moyenne = mean(spesPaValues);
@@ -559,6 +599,8 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
 
   summary.plaisir_moyen_total_avec_familiarisation = mean(plaisirValues);
   summary.plaisir_moyen_phases_1_4 = mean(plaisirValuesPhases1To4);
+  summary.respect_consigne_moyen_total_avec_familiarisation = mean(respectConsigneValues);
+  summary.respect_consigne_moyen_phases_1_4 = mean(respectConsigneValuesPhases1To4);
 
   /* Sociodémographie */
   if (socioEntry) {
