@@ -443,7 +443,8 @@ function goToConditionFamiliarisation() {
 }
 
 function goToSPES(phase) {
-  naviguerVers(`../questionnaires/spes.html?phase=${encodeURIComponent(phase)}`);
+  // Temporairement remplacé par le MPS
+  naviguerVers(`../questionnaires/mps.html?phase=${encodeURIComponent(phase)}`);
 }
 
 function goToEffort(phase) {
