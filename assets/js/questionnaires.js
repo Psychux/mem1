@@ -648,6 +648,7 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
   if (socioEntry) {
     summary.preference_vue = socioEntry.preference_vue;
     summary.connaissance_medieval_dynasty = socioEntry.connaissance_medieval_dynasty;
+    summary.pratique_sportive = socioEntry.pratique_sportive;
     summary.fatigue_generale_jour_experience = socioEntry.fatigue_generale_jour_experience;
     summary.age = socioEntry.age;
     summary.genre = socioEntry.genre;

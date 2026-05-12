@@ -18,8 +18,8 @@
 
       <div class="consent-text">
         <p>
-          Les questions suivantes permettent de décrire l’échantillon et de contextualiser les réponses.
-          Il n’y a pas de bonne ou de mauvaise réponse.
+          Les questions suivantes permettent de décrire l'échantillon et de contextualiser les réponses.
+          Il n'y a pas de bonne ou de mauvaise réponse.
         </p>
       </div>
 
@@ -46,7 +46,7 @@
 
             <label>
               <input type="radio" name="preference_vue" value="pas_de_preference" />
-              Je n’ai pas de préférence
+              Je n'ai pas de préférence
             </label>
 
             <label>
@@ -72,18 +72,39 @@
 
             <label>
               <input type="radio" name="connaissance_medieval_dynasty" value="oui_images_videos" />
-              Oui, j’avais déjà vu des images ou vidéos du jeu
+              Oui, j'avais déjà vu des images ou vidéos du jeu
             </label>
 
             <label>
               <input type="radio" name="connaissance_medieval_dynasty" value="oui_deja_joue" />
-              Oui, j’y avais déjà joué
+              Oui, j'y avais déjà joué
             </label>
           </div>
         </div>
 
         <div class="question-block">
-          <h2>Comment estimez-vous votre niveau de fatigue général le jour de l’expérience ?</h2>
+          <h2>Quelle est votre situation vis-à-vis de la pratique sportive ?</h2>
+
+          <div class="radio-scale">
+            <label>
+              <input type="radio" name="pratique_sportive" value="non_pratiquant" />
+              Je ne pratique pas ou très rarement une activité physique
+            </label>
+
+            <label>
+              <input type="radio" name="pratique_sportive" value="loisir" />
+              Je pratique une activité physique de loisir (au moins une fois par semaine)
+            </label>
+
+            <label>
+              <input type="radio" name="pratique_sportive" value="competitif" />
+              Je pratique un sport de manière régulière dans un cadre compétitif ou fédéral
+            </label>
+          </div>
+        </div>
+
+        <div class="question-block">
+          <h2>Comment estimez-vous votre niveau de fatigue général le jour de l'expérience ?</h2>
 
           <div class="range-container">
             <input
@@ -174,36 +195,35 @@
           "Veuillez répondre à la question sur votre préférence de vue en jeu."
         );
 
-        if (preferenceVue === null) {
-          return;
-        }
+        if (preferenceVue === null) return;
 
         const connaissanceMedievalDynasty = requireRadioGroup(
           "connaissance_medieval_dynasty",
-          "Veuillez indiquer si vous connaissiez Medieval Dynasty avant l’expérience."
+          "Veuillez indiquer si vous connaissiez Medieval Dynasty avant l'expérience."
         );
 
-        if (connaissanceMedievalDynasty === null) {
-          return;
-        }
+        if (connaissanceMedievalDynasty === null) return;
+
+        const pratiqueSpor = requireRadioGroup(
+          "pratique_sportive",
+          "Veuillez répondre à la question sur la pratique sportive."
+        );
+
+        if (pratiqueSpor === null) return;
 
         const fatigueGenerale = requireRangeValue(
           "fatigueGenerale",
-          "Veuillez indiquer votre niveau de fatigue général le jour de l’expérience."
+          "Veuillez indiquer votre niveau de fatigue général le jour de l'expérience."
         );
 
-        if (fatigueGenerale === null) {
-          return;
-        }
+        if (fatigueGenerale === null) return;
 
         const age = requireTextValue(
           "age",
           "Veuillez indiquer votre âge."
         );
 
-        if (age === null) {
-          return;
-        }
+        if (age === null) return;
 
         const ageNumber = Number(age);
 
@@ -217,9 +237,7 @@
           "Veuillez répondre à la question sur le genre."
         );
 
-        if (genre === null) {
-          return;
-        }
+        if (genre === null) return;
 
         const entry = {
           ...createBaseEntry({
@@ -229,6 +247,7 @@
           }),
           preference_vue: preferenceVue,
           connaissance_medieval_dynasty: connaissanceMedievalDynasty,
+          pratique_sportive: pratiqueSpor,
           fatigue_generale_jour_experience: fatigueGenerale,
           age: ageNumber,
           genre: genre
