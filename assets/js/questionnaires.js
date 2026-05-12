@@ -442,6 +442,10 @@ function goToConditionFamiliarisation() {
   naviguerVers(`../${condition}/familiarisation.html`);
 }
 
+function goToMPS(phase) {
+  naviguerVers(`../questionnaires/mps.html?phase=${encodeURIComponent(phase)}`);
+}
+
 function goToSPES(phase) {
   // Temporairement remplacé par le MPS
   naviguerVers(`../questionnaires/mps.html?phase=${encodeURIComponent(phase)}`);
@@ -503,6 +507,7 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
   );
 
   const spesEntries = data.filter(entry => entry.questionnaire === "spes");
+  const mpsEntries = data.filter(entry => entry.questionnaire === "mps");
   const evaluationEntries = data.filter(entry => entry.questionnaire === "evaluation_phase");
   const vviqEntry = data.find(entry => entry.questionnaire === "vviq2");
   const socioEntry = data.find(entry => entry.questionnaire === "sociodemographie");
@@ -543,6 +548,26 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
     summary[`spes_total_${phase}`] = entry.spes_total;
   }
 
+  /* MPS */
+  for (const entry of mpsEntries) {
+    const phase = entry.phase;
+
+    summary[`mps_pp_01_${phase}`] = entry.mps_pp_01;
+    summary[`mps_pp_02_${phase}`] = entry.mps_pp_02;
+    summary[`mps_pp_03_${phase}`] = entry.mps_pp_03;
+    summary[`mps_pp_04_${phase}`] = entry.mps_pp_04;
+    summary[`mps_pp_05_${phase}`] = entry.mps_pp_05;
+    summary[`mps_sp_01_${phase}`] = entry.mps_sp_01;
+    summary[`mps_sp_02_${phase}`] = entry.mps_sp_02;
+    summary[`mps_sp_03_${phase}`] = entry.mps_sp_03;
+    summary[`mps_sp_04_${phase}`] = entry.mps_sp_04;
+    summary[`mps_sp_05_${phase}`] = entry.mps_sp_05;
+
+    summary[`mps_presence_physique_total_${phase}`] = entry.mps_presence_physique_total;
+    summary[`mps_self_presence_total_${phase}`] = entry.mps_self_presence_total;
+    summary[`mps_total_${phase}`] = entry.mps_total;
+  }
+
   /* Évaluation de phase : effort mental + plaisir */
   for (const entry of evaluationEntries) {
     const phase = entry.phase;
@@ -562,6 +587,18 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
 
   const spesPaValues = spesEntries
     .map(entry => Number(entry.spes_pa_total))
+    .filter(value => !Number.isNaN(value));
+
+  const mpsTotalValues = mpsEntries
+    .map(entry => Number(entry.mps_total))
+    .filter(value => !Number.isNaN(value));
+
+  const mpsPresencePhysiqueValues = mpsEntries
+    .map(entry => Number(entry.mps_presence_physique_total))
+    .filter(value => !Number.isNaN(value));
+
+  const mpsSelfPresenceValues = mpsEntries
+    .map(entry => Number(entry.mps_self_presence_total))
     .filter(value => !Number.isNaN(value));
 
   const effortValues = evaluationEntries
@@ -594,6 +631,10 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
   summary.spes_total_moyenne = mean(spesTotalValues);
   summary.spes_sl_moyenne = mean(spesSlValues);
   summary.spes_pa_moyenne = mean(spesPaValues);
+
+  summary.mps_total_moyenne = mean(mpsTotalValues);
+  summary.mps_presence_physique_moyenne = mean(mpsPresencePhysiqueValues);
+  summary.mps_self_presence_moyenne = mean(mpsSelfPresenceValues);
 
   summary.effort_moyen_total_avec_familiarisation = mean(effortValues);
   summary.effort_moyen_phases_1_4 = mean(effortValuesPhases1To4);
