@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Questionnaire de présence</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+  <main class="card">
+
+    <p id="infosParticipant" class="info-line"></p>
+
+    <h1>Questionnaire de présence</h1>
+
+    <p>
+      Pour chaque affirmation, indiquez dans quelle mesure vous êtes d'accord
+      avec ce que vous venez de vivre.
+    </p>
+
+    <form id="formMPS" novalidate>
+
+      <div id="questionsContainer">
+
+        <!-- Présence physique -->
+
+        <div class="likert-question">
+          <h2>L'environnement virtuel me semblait réel.</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_pp_01" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_pp_01" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_pp_01" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_pp_01" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_pp_01" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+        <div class="likert-question">
+          <h2>J'avais l'impression d'agir au sein de cet environnement virtuel, plutôt que de le contrôler depuis l'extérieur.</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_pp_02" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_pp_02" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_pp_02" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_pp_02" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_pp_02" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+        <div class="likert-question">
+          <h2>Mon expérience dans cet environnement virtuel me semblait cohérente avec mes expériences dans le monde réel.</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_pp_03" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_pp_03" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_pp_03" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_pp_03" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_pp_03" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+        <div class="likert-question">
+          <h2>Pendant que j'étais dans l'environnement virtuel, j'avais l'impression d'« y être ».</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_pp_04" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_pp_04" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_pp_04" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_pp_04" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_pp_04" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+        <div class="likert-question">
+          <h2>J'étais complètement captivé par le monde virtuel.</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_pp_05" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_pp_05" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_pp_05" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_pp_05" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_pp_05" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+        <!-- Self presence -->
+
+        <div class="likert-question">
+          <h2>J'avais l'impression que mon avatar virtuel était une extension de mon corps réel au sein de l'environnement virtuel.</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_sp_01" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_sp_01" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_sp_01" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_sp_01" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_sp_01" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+        <div class="likert-question">
+          <h2>Quand quelque chose arrivait à mon avatar, j'avais l'impression que cela arrivait à mon corps réel.</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_sp_02" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_sp_02" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_sp_02" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_sp_02" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_sp_02" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+        <div class="likert-question">
+          <h2>J'avais l'impression que mon bras réel était projeté dans l'environnement virtuel par l'intermédiaire de mon avatar.</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_sp_03" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_sp_03" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_sp_03" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_sp_03" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_sp_03" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+        <div class="likert-question">
+          <h2>J'avais l'impression que ma main réelle se trouvait à l'intérieur de l'environnement virtuel.</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_sp_04" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_sp_04" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_sp_04" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_sp_04" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_sp_04" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+        <div class="likert-question">
+          <h2>Pendant la simulation, j'avais l'impression que mon avatar et mon corps réel ne faisaient plus qu'un.</h2>
+          <div class="likert-scale">
+            <label><input type="radio" name="mps_sp_05" value="1" /><span class="likert-number">1</span><span class="likert-label">Pas du tout d'accord</span></label>
+            <label><input type="radio" name="mps_sp_05" value="2" /><span class="likert-number">2</span><span class="likert-label">Pas d'accord</span></label>
+            <label><input type="radio" name="mps_sp_05" value="3" /><span class="likert-number">3</span><span class="likert-label">Ni en accord ni en désaccord</span></label>
+            <label><input type="radio" name="mps_sp_05" value="4" /><span class="likert-number">4</span><span class="likert-label">D'accord</span></label>
+            <label><input type="radio" name="mps_sp_05" value="5" /><span class="likert-number">5</span><span class="likert-label">Tout à fait d'accord</span></label>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="messageErreur" class="message warning" style="display:none;"></div>
+
+      <button type="button" onclick="validerMPS()">Valider</button>
+
+    </form>
+
+  </main>
+
+  <script src="../assets/js/questionnaires.js"></script>
+  <script>
+    const phase = getPhaseFromUrl();
+    const startTime = new Date();
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!verifierSessionParticipant()) return;
+      afficherInfosParticipant("infosParticipant", false);
+      randomiserOrdreQuestions("questionsContainer");
+    });
+
+    function validerMPS() {
+      const groupNames = [
+        "mps_pp_01", "mps_pp_02", "mps_pp_03", "mps_pp_04", "mps_pp_05",
+        "mps_sp_01", "mps_sp_02", "mps_sp_03", "mps_sp_04", "mps_sp_05"
+      ];
+
+      const responses = requireAllRadioGroups(
+        groupNames,
+        "Veuillez répondre à toutes les questions avant de continuer."
+      );
+
+      if (responses === null) return;
+
+      saveMPSResponses({ phase, startTime, responses });
+
+      goToEffort(phase);
+    }
+  </script>
+
+</body>
+</html>
