@@ -345,7 +345,46 @@ function saveMPSResponses({ phase, startTime, responses }) {
   };
 
   saveDataEntry(entry);
+  return entry;
+}
 
+/* -----------------------------
+   GUESS - Enjoyment (Phan et al., 2016)
+   Item 3 (guess_03) : recoté (8 - score)
+----------------------------- */
+
+function calculateGUESSScores(responses) {
+  const guess01 = Number(responses.guess_01);
+  const guess02 = Number(responses.guess_02);
+  const guess03_brut = Number(responses.guess_03);
+  const guess03_recote = 8 - guess03_brut;
+  const guess04 = Number(responses.guess_04);
+  const guess05 = Number(responses.guess_05);
+
+  const guessTotal = guess01 + guess02 + guess03_recote + guess04 + guess05;
+  const guessMoyenne = guessTotal / 5;
+
+  return {
+    guess_03_recote: guess03_recote,
+    guess_total: guessTotal,
+    guess_moyenne: guessMoyenne
+  };
+}
+
+function saveGUESSResponses({ phase, startTime, responses }) {
+  const scores = calculateGUESSScores(responses);
+
+  const entry = {
+    ...createBaseEntry({
+      questionnaire: "guess",
+      phase: phase,
+      startTime: startTime
+    }),
+    ...responses,
+    ...scores
+  };
+
+  saveDataEntry(entry);
   return entry;
 }
 
@@ -357,7 +396,6 @@ function saveEvaluationPhaseResponse({
   phase,
   startTime,
   effortMental,
-  plaisir,
   respectConsigne
 }) {
   const entry = {
@@ -367,7 +405,6 @@ function saveEvaluationPhaseResponse({
       startTime: startTime
     }),
     effort_mental: Number(effortMental),
-    plaisir: Number(plaisir),
     respect_consigne: Number(respectConsigne)
   };
 
@@ -451,6 +488,10 @@ function goToSPES(phase) {
   naviguerVers(`../questionnaires/mps.html?phase=${encodeURIComponent(phase)}`);
 }
 
+function goToGUESS(phase) {
+  naviguerVers(`../questionnaires/guess.html?phase=${encodeURIComponent(phase)}`);
+}
+
 function goToEffort(phase) {
   naviguerVers(`../questionnaires/effort.html?phase=${encodeURIComponent(phase)}`);
 }
@@ -508,6 +549,7 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
 
   const spesEntries = data.filter(entry => entry.questionnaire === "spes");
   const mpsEntries = data.filter(entry => entry.questionnaire === "mps");
+  const guessEntries = data.filter(entry => entry.questionnaire === "guess");
   const evaluationEntries = data.filter(entry => entry.questionnaire === "evaluation_phase");
   const vviqEntry = data.find(entry => entry.questionnaire === "vviq2");
   const socioEntry = data.find(entry => entry.questionnaire === "sociodemographie");
@@ -568,12 +610,25 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
     summary[`mps_total_${phase}`] = entry.mps_total;
   }
 
-  /* Évaluation de phase : effort mental + plaisir */
+  /* GUESS */
+  for (const entry of guessEntries) {
+    const phase = entry.phase;
+
+    summary[`guess_01_${phase}`] = entry.guess_01;
+    summary[`guess_02_${phase}`] = entry.guess_02;
+    summary[`guess_03_${phase}`] = entry.guess_03;
+    summary[`guess_03_recote_${phase}`] = entry.guess_03_recote;
+    summary[`guess_04_${phase}`] = entry.guess_04;
+    summary[`guess_05_${phase}`] = entry.guess_05;
+    summary[`guess_total_${phase}`] = entry.guess_total;
+    summary[`guess_moyenne_${phase}`] = entry.guess_moyenne;
+  }
+
+  /* Évaluation de phase : effort mental */
   for (const entry of evaluationEntries) {
     const phase = entry.phase;
 
     summary[`effort_mental_${phase}`] = entry.effort_mental;
-    summary[`plaisir_${phase}`] = entry.plaisir;
     summary[`respect_consigne_${phase}`] = entry.respect_consigne;
   }
 
@@ -601,6 +656,15 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
     .map(entry => Number(entry.mps_self_presence_total))
     .filter(value => !Number.isNaN(value));
 
+  const guessMoyenneValues = guessEntries
+    .map(entry => Number(entry.guess_moyenne))
+    .filter(value => !Number.isNaN(value));
+
+  const guessMoyennePhases1to4Values = guessEntries
+    .filter(entry => ["phase1", "phase2", "phase3", "phase4"].includes(entry.phase))
+    .map(entry => Number(entry.guess_moyenne))
+    .filter(value => !Number.isNaN(value));
+
   const effortValues = evaluationEntries
     .map(entry => Number(entry.effort_mental))
     .filter(value => !Number.isNaN(value));
@@ -608,15 +672,6 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
   const effortValuesPhases1To4 = evaluationEntries
     .filter(entry => ["phase1", "phase2", "phase3", "phase4"].includes(entry.phase))
     .map(entry => Number(entry.effort_mental))
-    .filter(value => !Number.isNaN(value));
-
-  const plaisirValues = evaluationEntries
-    .map(entry => Number(entry.plaisir))
-    .filter(value => !Number.isNaN(value));
-
-  const plaisirValuesPhases1To4 = evaluationEntries
-    .filter(entry => ["phase1", "phase2", "phase3", "phase4"].includes(entry.phase))
-    .map(entry => Number(entry.plaisir))
     .filter(value => !Number.isNaN(value));
 
   const respectConsigneValues = evaluationEntries
@@ -636,16 +691,18 @@ function calculateParticipantSummary(participantId = getParticipantId()) {
   summary.mps_presence_physique_moyenne = mean(mpsPresencePhysiqueValues);
   summary.mps_self_presence_moyenne = mean(mpsSelfPresenceValues);
 
+  summary.guess_moyenne_totale_avec_familiarisation = mean(guessMoyenneValues);
+  summary.guess_moyenne_phases_1_4 = mean(guessMoyennePhases1to4Values);
+
   summary.effort_moyen_total_avec_familiarisation = mean(effortValues);
   summary.effort_moyen_phases_1_4 = mean(effortValuesPhases1To4);
 
-  summary.plaisir_moyen_total_avec_familiarisation = mean(plaisirValues);
-  summary.plaisir_moyen_phases_1_4 = mean(plaisirValuesPhases1To4);
   summary.respect_consigne_moyen_total_avec_familiarisation = mean(respectConsigneValues);
   summary.respect_consigne_moyen_phases_1_4 = mean(respectConsigneValuesPhases1To4);
 
   /* Sociodémographie */
   if (socioEntry) {
+    summary.frequence_jeu = socioEntry.frequence_jeu;
     summary.preference_vue = socioEntry.preference_vue;
     summary.connaissance_medieval_dynasty = socioEntry.connaissance_medieval_dynasty;
     summary.pratique_sportive = socioEntry.pratique_sportive;

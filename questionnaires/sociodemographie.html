@@ -26,6 +26,32 @@
       <form id="formSociodemographie">
 
         <div class="question-block">
+          <h2>À quelle fréquence jouez-vous habituellement à des jeux vidéo ?</h2>
+
+          <div class="radio-scale">
+            <label>
+              <input type="radio" name="frequence_jeu" value="jamais" />
+              Jamais ou presque jamais
+            </label>
+
+            <label>
+              <input type="radio" name="frequence_jeu" value="occasionnellement" />
+              Occasionnellement (quelques fois par mois)
+            </label>
+
+            <label>
+              <input type="radio" name="frequence_jeu" value="regulierement" />
+              Régulièrement (au moins une fois par semaine)
+            </label>
+
+            <label>
+              <input type="radio" name="frequence_jeu" value="quotidiennement" />
+              Quotidiennement
+            </label>
+          </div>
+        </div>
+
+        <div class="question-block">
           <h2>Lorsque vous jouez à un jeu vidéo, quel type de vue préférez-vous généralement ?</h2>
 
           <div class="radio-scale">
@@ -164,6 +190,14 @@
       });
 
       document.getElementById("boutonTerminer").addEventListener("click", function () {
+
+        const frequenceJeu = requireRadioGroup(
+          "frequence_jeu",
+          "Veuillez répondre à la question sur la fréquence de jeu."
+        );
+
+        if (frequenceJeu === null) return;
+
         const preferenceVue = requireRadioGroup(
           "preference_vue",
           "Veuillez répondre à la question sur votre préférence de vue en jeu."
@@ -219,6 +253,7 @@
             phase: "post_experience",
             startTime: startTime
           }),
+          frequence_jeu: frequenceJeu,
           preference_vue: preferenceVue,
           connaissance_medieval_dynasty: connaissanceMedievalDynasty,
           pratique_sportive: pratiqueSpor,
