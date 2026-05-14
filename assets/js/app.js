@@ -85,6 +85,8 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
   const data = getDataForParticipant(participantId);
 
   const spesEntries = data.filter(entry => entry.questionnaire === "spes");
+  const mpsEntries = data.filter(entry => entry.questionnaire === "mps");
+  const guessEntries = data.filter(entry => entry.questionnaire === "guess");
   const evaluationEntries = data.filter(entry => entry.questionnaire === "evaluation_phase");
   const vviqEntry = data.find(entry => entry.questionnaire === "vviq2");
   const socioEntry = data.find(entry => entry.questionnaire === "sociodemographie");
@@ -93,9 +95,10 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
     protocol_version: getProtocolVersion(),
     participant_id: participantId,
     condition_experimentale:
-    data.find(entry => entry.condition_experimentale)?.condition_experimentale || getCurrentCondition()
+      data.find(entry => entry.condition_experimentale)?.condition_experimentale || getCurrentCondition()
   };
 
+  /* VVIQ-2 */
   if (vviqEntry) {
     for (let i = 1; i <= 16; i++) {
       const itemNumber = String(i).padStart(2, "0");
@@ -106,6 +109,7 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
     summary.vviq_total = vviqEntry.vviq_total;
   }
 
+  /* SPES */
   for (const entry of spesEntries) {
     const phase = entry.phase;
 
@@ -123,11 +127,45 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
     summary[`spes_total_${phase}`] = entry.spes_total;
   }
 
+  /* MPS */
+  for (const entry of mpsEntries) {
+    const phase = entry.phase;
+
+    summary[`mps_pp_01_${phase}`] = entry.mps_pp_01;
+    summary[`mps_pp_02_${phase}`] = entry.mps_pp_02;
+    summary[`mps_pp_03_${phase}`] = entry.mps_pp_03;
+    summary[`mps_pp_04_${phase}`] = entry.mps_pp_04;
+    summary[`mps_pp_05_${phase}`] = entry.mps_pp_05;
+    summary[`mps_sp_01_${phase}`] = entry.mps_sp_01;
+    summary[`mps_sp_02_${phase}`] = entry.mps_sp_02;
+    summary[`mps_sp_03_${phase}`] = entry.mps_sp_03;
+    summary[`mps_sp_04_${phase}`] = entry.mps_sp_04;
+    summary[`mps_sp_05_${phase}`] = entry.mps_sp_05;
+
+    summary[`mps_presence_physique_total_${phase}`] = entry.mps_presence_physique_total;
+    summary[`mps_self_presence_total_${phase}`] = entry.mps_self_presence_total;
+    summary[`mps_total_${phase}`] = entry.mps_total;
+  }
+
+  /* GUESS */
+  for (const entry of guessEntries) {
+    const phase = entry.phase;
+
+    summary[`guess_01_${phase}`] = entry.guess_01;
+    summary[`guess_02_${phase}`] = entry.guess_02;
+    summary[`guess_03_${phase}`] = entry.guess_03;
+    summary[`guess_03_recote_${phase}`] = entry.guess_03_recote;
+    summary[`guess_04_${phase}`] = entry.guess_04;
+    summary[`guess_05_${phase}`] = entry.guess_05;
+    summary[`guess_total_${phase}`] = entry.guess_total;
+    summary[`guess_moyenne_${phase}`] = entry.guess_moyenne;
+  }
+
+  /* Évaluation de phase */
   for (const entry of evaluationEntries) {
     const phase = entry.phase;
 
     summary[`effort_mental_${phase}`] = entry.effort_mental;
-    summary[`plaisir_${phase}`] = entry.plaisir;
     summary[`respect_consigne_${phase}`] = entry.respect_consigne;
   }
 
@@ -135,16 +173,13 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
     .map(entry => Number(entry.spes_total))
     .filter(value => !Number.isNaN(value));
 
-  const spesSlValues = spesEntries
-    .map(entry => Number(entry.spes_sl_total))
+  const mpsTotalValues = mpsEntries
+    .map(entry => Number(entry.mps_total))
     .filter(value => !Number.isNaN(value));
 
-  const spesPaValues = spesEntries
-    .map(entry => Number(entry.spes_pa_total))
-    .filter(value => !Number.isNaN(value));
-
-  const effortValues = evaluationEntries
-    .map(entry => Number(entry.effort_mental))
+  const guessMoyennePhases1to4Values = guessEntries
+    .filter(entry => ["phase1", "phase2", "phase3", "phase4"].includes(entry.phase))
+    .map(entry => Number(entry.guess_moyenne))
     .filter(value => !Number.isNaN(value));
 
   const effortValuesPhases1To4 = evaluationEntries
@@ -152,40 +187,23 @@ function calculateParticipantSummary(participantId = getCurrentParticipant()) {
     .map(entry => Number(entry.effort_mental))
     .filter(value => !Number.isNaN(value));
 
-  const plaisirValues = evaluationEntries
-    .map(entry => Number(entry.plaisir))
-    .filter(value => !Number.isNaN(value));
-
-  const plaisirValuesPhases1To4 = evaluationEntries
+  const respectConsigneValuesPhases1To4 = evaluationEntries
     .filter(entry => ["phase1", "phase2", "phase3", "phase4"].includes(entry.phase))
-    .map(entry => Number(entry.plaisir))
-    .filter(value => !Number.isNaN(value));
-
-  const respectConsigneValues = evaluationEntries
     .map(entry => Number(entry.respect_consigne))
     .filter(value => !Number.isNaN(value));
 
-  const respectConsigneValuesPhases1To4 = evaluationEntries
-   .filter(entry => ["phase1", "phase2", "phase3", "phase4"].includes(entry.phase))
-   .map(entry => Number(entry.respect_consigne))
-   .filter(value => !Number.isNaN(value));
-
   summary.spes_total_moyenne = mean(spesTotalValues);
-  summary.spes_sl_moyenne = mean(spesSlValues);
-  summary.spes_pa_moyenne = mean(spesPaValues);
-
-  summary.effort_moyen_total_avec_familiarisation = mean(effortValues);
+  summary.mps_total_moyenne = mean(mpsTotalValues);
+  summary.guess_moyenne_phases_1_4 = mean(guessMoyennePhases1to4Values);
   summary.effort_moyen_phases_1_4 = mean(effortValuesPhases1To4);
+  summary.respect_consigne_moyen_phases_1_4 = mean(respectConsigneValuesPhases1To4);
 
-  summary.plaisir_moyen_total_avec_familiarisation = mean(plaisirValues);
-  summary.plaisir_moyen_phases_1_4 = mean(plaisirValuesPhases1To4);
-
-  summary.respect_consigne_moyen_total_avec_familiarisation = mean(respectConsigneValues);
-  summary.respect_consigne_moyen_phases_1_4 = mean(respectConsigneValuesPhases1To4);  
-
+  /* Sociodémographie */
   if (socioEntry) {
     summary.preference_vue = socioEntry.preference_vue;
     summary.connaissance_medieval_dynasty = socioEntry.connaissance_medieval_dynasty;
+    summary.pratique_sportive = socioEntry.pratique_sportive;
+    summary.frequence_jeu = socioEntry.frequence_jeu;
     summary.fatigue_generale_jour_experience = socioEntry.fatigue_generale_jour_experience;
     summary.age = socioEntry.age;
     summary.genre = socioEntry.genre;
@@ -261,7 +279,7 @@ function initDashboard() {
   const inputParticipant = document.getElementById("participant");
   const selectCondition = document.getElementById("condition");
 
-  const boutonReprendre = document.getElementById("boutonReprendre");  
+  const boutonReprendre = document.getElementById("boutonReprendre");
   const boutonEnregistrer = document.getElementById("boutonEnregistrer");
   const boutonDemarrer = document.getElementById("boutonDemarrer");
   const boutonReinitialiser = document.getElementById("boutonReinitialiser");
@@ -287,13 +305,13 @@ function initDashboard() {
   boutonReprendre.addEventListener("click", function () {
     const pageReprise = getPageReprise();
 
-     if (!pageReprise) {
-       alert("Aucune page de reprise n’est enregistrée.");
-       return;
+    if (!pageReprise) {
+      alert("Aucune page de reprise n'est enregistrée.");
+      return;
     }
 
-     window.location.href = pageReprise;
-    });
+    window.location.href = pageReprise;
+  });
 
   boutonEnregistrer.addEventListener("click", function () {
     const participant = inputParticipant.value.trim();
@@ -311,7 +329,7 @@ function initDashboard() {
 
     saveParticipantSettings(participant, condition);
     afficherSessionActive();
-  }); 
+  });
 
   boutonDemarrer.addEventListener("click", function () {
     window.location.href = "questionnaires/consentement.html";
@@ -334,7 +352,7 @@ function initDashboard() {
     message.style.display = "none";
     sessionInfo.innerHTML = `
       <h2>Session active</h2>
-      <p>Aucune session participant n’est actuellement enregistrée.</p>
+      <p>Aucune session participant n'est actuellement enregistrée.</p>
     `;
 
     resumeDonnees.style.display = "none";
@@ -359,14 +377,14 @@ function initDashboard() {
     resumeDonnees.style.display = "block";
     resumeDonnees.innerHTML = `
       <strong>Données du participant ${participantId}</strong><br>
-      Nombre d’entrées détaillées enregistrées : ${donneesParticipant.length}<br><br>
+      Nombre d'entrées détaillées enregistrées : ${donneesParticipant.length}<br><br>
       <strong>Synthèse disponible :</strong><br>
       VVIQ total : ${synthese.vviq_total ?? "non disponible"}<br>
       Âge : ${synthese.age ?? "non disponible"}<br>
       Genre : ${synthese.genre ?? "non disponible"}<br>
-      SPES moyen : ${synthese.spes_total_moyenne ?? "non disponible"}<br>
+      MPS total moyen : ${synthese.mps_total_moyenne ?? "non disponible"}<br>
+      Plaisir GUESS moyen phases 1 à 4 : ${synthese.guess_moyenne_phases_1_4 ?? "non disponible"}<br>
       Effort moyen phases 1 à 4 : ${synthese.effort_moyen_phases_1_4 ?? "non disponible"}<br>
-      Plaisir moyen phases 1 à 4 : ${synthese.plaisir_moyen_phases_1_4 ?? "non disponible"}<br>
       Respect consigne moyen phases 1 à 4 : ${synthese.respect_consigne_moyen_phases_1_4 ?? "non disponible"}<br>
     `;
   });
@@ -447,10 +465,11 @@ function initDashboard() {
     const pageReprise = getPageReprise();
 
     if (pageReprise) {
-     boutonReprendre.classList.remove("hidden");
+      boutonReprendre.classList.remove("hidden");
     } else {
       boutonReprendre.classList.add("hidden");
     }
+
     afficherBoutonsExport();
   }
 
