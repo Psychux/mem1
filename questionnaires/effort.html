@@ -18,11 +18,12 @@
 
       <div class="consent-text">
         <p>
-          Répondez aux deux questions suivantes en fonction de la phase de jeu que vous venez de réaliser.
+          Répondez aux questions suivantes en fonction de la phase de jeu que vous venez de réaliser.
         </p>
       </div>
 
       <form id="formEvaluationPhase">
+
         <div class="range-container">
           <label for="effortMental">
             Dans quelle mesure cette phase de jeu vous a-t-elle demandé un effort mental ?
@@ -47,62 +48,34 @@
           </div>
         </div>
 
-        <div class="range-container">
-          <label for="plaisir">
-            Dans quelle mesure cette phase de jeu vous a-t-elle procuré du plaisir ?
-          </label>
+        <div class="likert-question">
+          <h2>Dans quelle mesure avez-vous réussi à respecter la consigne de cette phase ?</h2>
 
-          <input
-            id="plaisir"
-            type="range"
-            min="0"
-            max="100"
-            step="1"
-            value="50"
-          />
-
-          <div class="range-labels">
-            <span>Extrêmement faible</span>
-            <span>Extrêmement élevé</span>
-          </div>
-
-          <div class="range-value">
-            Valeur sélectionnée : <span id="valeurPlaisir">50</span>
+          <div class="likert-scale">
+            <label>
+              <input type="radio" name="respect_consigne" value="1" />
+              <span class="likert-number">1</span>
+              <span class="likert-label">Pas du tout</span>
+            </label>
+            <label>
+              <input type="radio" name="respect_consigne" value="2" />
+              <span class="likert-number">2</span>
+            </label>
+            <label>
+              <input type="radio" name="respect_consigne" value="3" />
+              <span class="likert-number">3</span>
+            </label>
+            <label>
+              <input type="radio" name="respect_consigne" value="4" />
+              <span class="likert-number">4</span>
+            </label>
+            <label>
+              <input type="radio" name="respect_consigne" value="5" />
+              <span class="likert-number">5</span>
+              <span class="likert-label">Énormément</span>
+            </label>
           </div>
         </div>
-        <div class="likert-question">
-
-  <h2>Dans quelle mesure avez-vous réussi à respecter la consigne de cette phase ?</h2>
-
-  <div class="likert-scale">
-    <label>
-      <input type="radio" name="respect_consigne" value="1" />
-      <span class="likert-number">1</span>
-      <span class="likert-label">Pas du tout</span>
-    </label>
-
-    <label>
-      <input type="radio" name="respect_consigne" value="2" />
-      <span class="likert-number">2</span>
-    </label>
-
-    <label>
-      <input type="radio" name="respect_consigne" value="3" />
-      <span class="likert-number">3</span>
-    </label>
-
-    <label>
-      <input type="radio" name="respect_consigne" value="4" />
-      <span class="likert-number">4</span>
-    </label>
-
-    <label>
-      <input type="radio" name="respect_consigne" value="5" />
-      <span class="likert-number">5</span>
-      <span class="likert-label">Énormément</span>
-    </label>
-  </div>
-</div>
 
         <button type="button" id="boutonContinuer" class="success">
           Continuer
@@ -124,61 +97,41 @@
       const phase = getPhaseFromUrl("");
 
       if (!phase) {
-        showError("Erreur : aucune phase n’est indiquée. Veuillez appeler l’expérimentateur.");
+        showError("Erreur : aucune phase n'est indiquée. Veuillez appeler l'expérimentateur.");
       }
 
       const effortInput = document.getElementById("effortMental");
-      const plaisirInput = document.getElementById("plaisir");
-
       const valeurEffort = document.getElementById("valeurEffort");
-      const valeurPlaisir = document.getElementById("valeurPlaisir");
 
       effortInput.addEventListener("input", function () {
         valeurEffort.textContent = effortInput.value;
       });
 
-      plaisirInput.addEventListener("input", function () {
-        valeurPlaisir.textContent = plaisirInput.value;
-      });
-
       document.getElementById("boutonContinuer").addEventListener("click", function () {
         if (!phase) {
-          showError("Erreur : aucune phase n’est indiquée. Veuillez appeler l’expérimentateur.");
+          showError("Erreur : aucune phase n'est indiquée. Veuillez appeler l'expérimentateur.");
           return;
         }
 
         const effortMental = requireRangeValue(
           "effortMental",
-          "Veuillez indiquer l’effort mental fourni avant de continuer."
+          "Veuillez indiquer l'effort mental fourni avant de continuer."
         );
 
-        if (effortMental === null) {
-          return;
-        }
-        const plaisir = requireRangeValue(
-          "plaisir",
-          "Veuillez indiquer le plaisir ressenti avant de continuer."
-        );
-
-        if (plaisir === null) {
-           return;
-        }
+        if (effortMental === null) return;
 
         const respectConsigne = requireRadioGroup(
           "respect_consigne",
           "Veuillez indiquer dans quelle mesure vous avez réussi à respecter la consigne de cette phase."
         );
 
-        if (respectConsigne === null) {
-         return;
-        }
+        if (respectConsigne === null) return;
 
         saveEvaluationPhaseResponse({
-         phase: phase,
-         startTime: startTime,
-         effortMental: effortMental,
-         plaisir: plaisir,
-         respectConsigne: respectConsigne
+          phase: phase,
+          startTime: startTime,
+          effortMental: effortMental,
+          respectConsigne: respectConsigne
         });
 
         goToNextPhaseAfterEffort(phase);
