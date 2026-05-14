@@ -228,6 +228,12 @@ h2 {
   grid-template-columns: repeat(7, 1fr);
 }
 
+.likert-scale-7 label {
+  min-height: 44px;
+  padding: 4px 2px;
+  font-size: 0.7rem;
+}
+
 .likert-scale label {
   display: flex;
   flex-direction: column;
