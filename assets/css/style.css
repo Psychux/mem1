@@ -224,6 +224,10 @@ h2 {
   margin-top: 8px;
 }
 
+.likert-scale-7 {
+  grid-template-columns: repeat(7, 1fr);
+}
+
 .likert-scale label {
   display: flex;
   flex-direction: column;
