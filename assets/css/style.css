@@ -226,6 +226,8 @@ h2 {
 
 .likert-scale-7 {
   grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .likert-scale-7 label {
